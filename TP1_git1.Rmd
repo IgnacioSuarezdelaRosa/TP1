@@ -1,0 +1,125 @@
+---
+title: "TP1_GIT1"
+author: "Ignacio Suarez de la Rosa"
+date: "22/9/2021"
+output: html_document
+---
+
+**TP1:** *Elegir alguna fuente de datos, importarla en un proyecto de R, limpiarlos, transformalos, describirlos*
+**Alumno: Ignacio Suárez de la Rosa**
+
+*Trabajaré con un dataset de la Ciudad Autónoma de Buenos Aires (BAData), incocorporando los establecimientos educativos, a fin de poder conocer cual es la cantidad de establecimientos educativos públicos en la Comuna 13*
+
+
+**1- Comenzaré cargando las librerías con las que voy a trabajar**
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+**2-Cargaré el Dataset con el que voy a trabajar, el cual dispone de información sobre los establecimientos educativos radicados en CABA** 
+
+
+```{r}
+Establecimientos_Educativos <- read_csv("establecimientos_educativos_WGS84.csv")
+```
+
+Ahora conozcamos nuestro dataset:
+
+Para esto, empecemos por los nombres:
+
+```{r}
+names(Establecimientos_Educativos)
+```
+
+*Veamos como se estructura:*
+
+```{r}
+dim(Establecimientos_Educativos)
+```
+
+*El dataset dispone de 2880 registros/filas y 28 columnas:*
+
+```{r}
+ncol(Establecimientos_Educativos)
+```
+
+```{r}
+nrow(Establecimientos_Educativos)
+```
+
+*Ahora, veamos el encabezado de datos:*
+
+```{r}
+head(Establecimientos_Educativos)
+```
+
+*Continuaré haciendo un resumen estadístico de los datos:*
+
+```{r}
+summary(Establecimientos_Educativos)
+```
+
+*Ahora veré la estructura del Dataset:*
+
+```{r}
+str(Establecimientos_Educativos)
+```
+
+*A continuación, haré un resumen estadístico de las Comunas del Dataset*
+
+```{r}
+summary(Establecimientos_Educativos$comuna)
+```
+```{r}
+str(Establecimientos_Educativos$comuna)
+```
+*Como se puede observar, el dataset se encuentra compuesto por Establecimientos Educativos distribuidos en las 15 comunas de la Ciudad de Buenos Aires*
+
+
+*Para poder realizar un analisis de los datos, filtraré por los establecimientos educativos ubicados en comuna 13*
+
+```{r}
+filtro_C13 <-filter(Establecimientos_Educativos, comuna=="13")
+head(filtro_C13)
+```
+```{r}
+dim(filtro_C13)
+```
+*Como podemos observar, en la Comuna 13 nuestro dataset nos arroja 203 establecimientos educativos*
+
+*A continuación, voy a renombrar la columna del nombre del establecimiento":*
+
+```{r}
+Renombrar_C13 <- rename(filtro_C13, NOMBRE=nombre_est)
+
+head(Renombrar_C13)
+```
+
+*Ahora limpiaré los datos con funciones de Janitor*
+
+```{r}
+Renombrar_C13 <- janitor::clean_names(Renombrar_C13)
+```
+
+*A continuación, me quedaré solo con el sector (público o privado), el nombre y el barrio*
+
+```{r}
+Seleccion_C13 <- select(Renombrar_C13, barrio, sector, nombre)
+
+head(Seleccion_C13)
+```
+
+*Veamos cuantos establecimientos educativos del sector público hay en el barrio de Nuñez*
+
+```{r}
+Filtro_NUÑEZ_PUBLICO <-filter(Seleccion_C13, sector=="1", barrio=="NUÑEZ")
+head(Filtro_NUÑEZ_PUBLICO)
+```
+```{r}
+dim(Filtro_NUÑEZ_PUBLICO)
+```
+
+*Mi dataset arroja 24 establecimientos educativos del sector 1 (público) situados en el barrio de nuñez, correspondientes a la Comuna 13 de la Ciudad de Buenos Aires*
+
